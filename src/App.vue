@@ -1,15 +1,16 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <RouterLink to="/login" v-if="!shouldShowLink" > login </RouterLink>
+  <RouterLink to="/register" v-if="!shouldShowLink" > register </RouterLink>
+  <RouterView></RouterView>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  computed: {
+    shouldShowLink() {
+      return this.$route.path !== '/';
+    },
   }
 }
 </script>

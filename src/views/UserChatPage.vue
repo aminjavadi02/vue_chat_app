@@ -22,8 +22,26 @@ import { useRoute } from 'vue-router';
 
 
 const MY_SUBSCRIPTION = gql`
-	subscription MyQuery {
-	messages {
+	subscription GetMessagesBetweenUsers ($userId1: Int!, $userId2: Int!) {
+	messages (
+		where: {
+			_and: [
+				{
+				_or: [
+					{ sender_id: { _eq: $userId1 } },
+					{ receiver_id: { _eq: $userId1 } }
+				]
+				},
+				{
+				_or: [
+					{ sender_id: { _eq: $userId2 } },
+					{ receiver_id: { _eq: $userId2 } }
+				]
+				},
+			]
+		}
+	)
+	{
 		content
 		created_at
 		id
@@ -34,7 +52,6 @@ const MY_SUBSCRIPTION = gql`
 		updated_at
 	}
 	}
-
 `;
 
 const NEW_MESSAGE = gql`
@@ -73,6 +90,10 @@ export default {
 				try {
 					const observable = await apolloClient.subscribe({
 						query: MY_SUBSCRIPTION,
+						variables:{
+							userId1: sender_id,
+							userId2: receiver_id.value
+						}
 					});
 					observable.subscribe({
 						next(response) {

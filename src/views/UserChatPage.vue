@@ -25,21 +25,15 @@ const MY_SUBSCRIPTION = gql`
 	subscription GetMessagesBetweenUsers ($userId1: Int!, $userId2: Int!) {
 	messages (
 		where: {
-			_and: [
-				{
-				_or: [
-					{ sender_id: { _eq: $userId1 } },
-					{ receiver_id: { _eq: $userId1 } }
-				]
-				},
-				{
-				_or: [
-					{ sender_id: { _eq: $userId2 } },
-					{ receiver_id: { _eq: $userId2 } }
-				]
-				},
-			]
-		}
+            _and: [
+                {
+                    _or: [
+                        { _and: [{ sender_id: { _eq: $userId1 } }, { receiver_id: { _eq: $userId2 } }] },
+                        { _and: [{ sender_id: { _eq: $userId2 } }, { receiver_id: { _eq: $userId1 } }] }
+                    ]
+                }
+            ]
+        }
 	)
 	{
 		content
